@@ -1,10 +1,10 @@
 # assets by Kenny: https://kenney.nl/assets/pixel-platformer
 
 # import packages
-from regular_spritesheet import RegularSpritesheet
 import pygame, sys
 from pygame.locals import *
 from regular_spritesheet import *
+from player import *
 
 # initialize game engine
 pygame.init()
@@ -15,14 +15,12 @@ screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 
 # create game variables
-frames = []
+player = Player((screen_width // 2, screen_height // 2), \
+    RegularSpritesheet("imgs/characters_packed.png", 24, 3))
 
 # initialize the game
 def init_game():
-    spritesheet = RegularSpritesheet("imgs/characters_packed.png", 24, 3)
-    frames.append(spritesheet.get_image(6, 2))
-    frames.append(spritesheet.get_image(7, 2))
-    frames.append(spritesheet.get_image(8, 2))
+    pass
 
 # closes the game
 def quit_game():
@@ -47,7 +45,7 @@ def main():
 
         # display
         screen.fill((50, 90, 150))
-        screen.blit(frames[pygame.time.get_ticks() // 120 % len(frames)], frames[0].get_rect())
+        player.display(screen)
         pygame.display.flip()
 
 if __name__ == "__main__":
