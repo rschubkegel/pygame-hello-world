@@ -6,6 +6,7 @@ from pygame.locals import *
 from regular_spritesheet import *
 from player import *
 
+
 # initialize game engine
 pygame.init()
 
@@ -18,13 +19,16 @@ clock = pygame.time.Clock()
 player = Player((screen_width // 2, screen_height // 2), \
     RegularSpritesheet("imgs/characters_packed.png", 24, 3))
 
+
 # initialize the game
 def init_game():
     pass
 
+
 # closes the game
 def quit_game():
     sys.exit()
+
 
 # main game function
 def main():
@@ -33,20 +37,21 @@ def main():
 
     while True:
 
-        # tick
-        clock.tick(30)
-
         # user input
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit_game()
 
         # physics
+        clock.tick(60)
+        player.update()
 
         # display
-        screen.fill((50, 90, 150))
+        screen.fill((30, 50, 80))
         player.display(screen)
         pygame.display.flip()
 
+
+# run game
 if __name__ == "__main__":
     main()
