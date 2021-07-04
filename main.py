@@ -1,4 +1,6 @@
-# assets by Kenny: https://kenney.nl/assets/pixel-platformer
+# Coded by Rylan Schubkegel: https://github.com/rschubkegel
+# Sprites by Kenny: https://kenney.nl/assets/pixel-platformer
+
 
 # import packages
 import pygame, sys

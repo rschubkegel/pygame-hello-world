@@ -33,7 +33,7 @@ class Player():
         self.move_x(keys)
         self.move_y(keys)
         self.rect.move_ip(self.speed)
-        self.bounce(pygame.display.Info().current_h)
+        self.bounce(pygame.display.Info())
 
 
     '''
@@ -69,13 +69,21 @@ class Player():
 
 
     '''
-    floor_y:    the y coordinate where the player should bounce
+    screen_info:object from which to get bounds of window
     bouciness:  how much the character should bounce,
                 0 is none and 1 bounces full velocity
     '''
-    def bounce(self, floor_y, bounciness=0):
-        if self.rect.bottom > floor_y:
-            self.rect.bottom = floor_y
+    def bounce(self, screen_info, bounciness=0):
+
+        # stop on L/R sides of screen
+        if self.rect.left < 0:
+            self.rect.left = 0
+        elif self.rect.right > screen_info.current_w:
+            self.rect.right = screen_info.current_w
+
+        # bounce on bottom of screen
+        if self.rect.bottom > screen_info.current_h:
+            self.rect.bottom = screen_info.current_h
             self.speed[1] *= -bounciness
             self.jumping = False
 
