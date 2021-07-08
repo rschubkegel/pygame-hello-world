@@ -13,8 +13,9 @@ from player import *
 pygame.init()
 
 # create pygame variables
-size = (screen_width, screen_height) = (1000, 600)
-screen = pygame.display.set_mode(size)
+screen_width = pygame.display.Info().current_w - 50
+screen_height = pygame.display.Info().current_h - 100
+screen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 
 # create game variables
