@@ -24,26 +24,55 @@ class Player():
 
     '''
     pos:        a tuple with x & y coordinates where the player starts
-    sheet:      a regular sprite sheet from which to load player images
+    sheet:      a regular sprite sheet from which to load animations
     '''
     def __init__(self, pos, sheet):
         super().__init__()
         self.speed = pygame.math.Vector2(0, 0)
-        self.frames = []
-        for i in range(2):
-            self.frames.append(sheet.get_image(0 + i, 0))
-        self.rect = self.frames[0].get_rect()
+        self.load_all_animations(sheet)
+        self.cur_anim = "idle"
+        self.rect = self.animations[self.cur_anim][0].get_rect()
         self.rect.center = pos
         self.moving_right = True
         self.jumping = False
 
 
+    '''
+    sheet:      a regular sprite sheet from which to load animations
+    '''
+    def load_all_animations(self, sheet):
+        self.animations = {}
+        self.load_animation(sheet, "idle", 1, 0)
+        self.load_animation(sheet, "run", 2, 0)
+
+
+    '''
+    sheet:      a regular sprite sheet from which to load animation frames
+    name:       the name of this animation
+    frame_num:  the number of frames in this animation
+    row:        the row on the sprite sheet where this animation is loaded from
+    '''
+    def load_animation(self, sheet, name, frame_num, row):
+        frames = []
+        for i in range(frame_num):
+            frames.append(sheet.get_image(0 + i, row))
+        self.animations[name] = frames
+
+
     def update(self):
+
+        # move
         keys = pygame.key.get_pressed()
         self.change_x_speed(keys)
         self.change_y_speed(keys)
         self.rect.move_ip(self.speed)
         self.bounce(pygame.display.Info(), 0.3)
+
+        # update animation
+        if (abs(self.speed[0]) > self.MAX_SPEED[0] * 0.9) and not self.jumping:
+            self.cur_anim = "run"
+        else:
+            self.cur_anim = "idle"
 
 
     '''
@@ -116,16 +145,14 @@ class Player():
     '''
     def display(self, screen):
 
-        # by default, just show first frame (character standing/floating)
-        frame = self.frames[0]
-
-        # if character is moving and on the ground, play animation
-        if abs(self.speed[0]) > 1.0 and not self.jumping:
-            frame = self.frames[pygame.time.get_ticks() // 120 % len(self.frames)]
+        # get frame from current animation
+        anim_len = len(self.animations[self.cur_anim])
+        frame = pygame.time.get_ticks() // 120 % anim_len
+        image = self.animations[self.cur_anim][frame]
 
         # flip the character if moving left
         if self.moving_right:
-            frame = pygame.transform.flip(frame, True, False)
+            image = pygame.transform.flip(image, True, False)
 
         # display character
-        screen.blit(frame, self.rect)
+        screen.blit(image, self.rect)
