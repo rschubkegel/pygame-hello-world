@@ -1,7 +1,7 @@
 import pygame
 
 
-class Spritesheet():
+class Spritesheet:
 
 
     '''
