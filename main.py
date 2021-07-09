@@ -7,6 +7,7 @@ import pygame, sys
 from pygame.locals import *
 from regular_spritesheet import *
 from player import *
+from tile_map import *
 
 
 # initialize game engine
@@ -16,11 +17,17 @@ pygame.init()
 screen_width = pygame.display.Info().current_w - 50
 screen_height = pygame.display.Info().current_h - 100
 screen = pygame.display.set_mode((screen_width, screen_height))
+scale = 3
 clock = pygame.time.Clock()
 
 # create game variables
-player = Player((screen_width // 2, screen_height // 2), \
-    RegularSpritesheet("imgs/characters_packed.png", 24, 3))
+player = Player( \
+    (screen_width // 2, screen_height // 2), \
+    RegularSpritesheet("imgs/characters_packed.png", 24, scale))
+tile_map = TileMap( \
+    RegularSpritesheet("imgs/tiles_packed.png", 18, scale), \
+    file_path="levels/level0.csv", \
+    pos=(0, screen_height))
 
 
 # initialize the game
@@ -48,9 +55,11 @@ def main():
         # physics
         clock.tick(60)
         player.update()
+        tile_map.update((0, 0))
 
         # display
         screen.fill((30, 50, 80))
+        tile_map.display(screen)
         player.display(screen)
         pygame.display.flip()
 
