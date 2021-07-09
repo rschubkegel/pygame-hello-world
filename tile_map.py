@@ -13,7 +13,7 @@ class TileMap:
     sheet:      a regular sprite sheet from which to load tiles
     file_path:  a file from which to load level data;
                 if this is not given, tile map *will* randomly generate
-    pos:        a tuple with x,y values of the bottom-left position of the map
+    pos:        a tuple with x,y values of the center of the map
     '''
     def __init__(self, sheet, file_path=None, pos=(0, 0)):
 
@@ -33,7 +33,7 @@ class TileMap:
     sheet:      a regular sprite sheet from which to load tiles
     file_path:  a file from which to load level data;
                 if this is not given, tile map *will* randomly generate
-    pos:        a tuple with x,y values of the bottom-left position of the map
+    pos:        a tuple with x,y values of the center of the map
     '''
     def load_from_file(self, sheet, file_path, pos):
 
@@ -47,6 +47,7 @@ class TileMap:
 
             # iterate through columns
             j = 0
+            col_count = len(data)
             for item in data:
 
                 # calculate image col,row in sprite sheet from CSV cell
@@ -54,16 +55,27 @@ class TileMap:
                 #  where a = 0, b = 2, etc.)
                 sheet_col = ord(item[0]) - ord("a")
                 sheet_row = ord(item[1]) - ord("a")
-                tile_img = sheet.get_image(sheet_col, sheet_row)
 
-                # calculate tile rectangle
-                tile_rect = tile_img.get_rect()
-                tile_rect.left = pos[0] + (j * tile_rect.width)
-                tile_rect.bottom = pos[1] - ((row_count - 1) * \
-                    tile_rect.height) + (i * tile_rect.height)
+                # if CSV cell had two spaces instead of letters,
+                # don't make a tile here
+                if sheet_col >= 0:
 
-                # add tile to sprite group
-                self.tile_group.add(Tile(tile_img, tile_rect))
+                    # get tile image
+                    tile_img = sheet.get_image(sheet_col, sheet_row)
+
+                    # create tile rectangle
+                    tile_rect = tile_img.get_rect()
+
+                    # center the tiles
+                    tile_rect.centerx = pos[0] \
+                        - (((col_count - 1) * tile_rect.width) / 2) \
+                        + (j * tile_rect.width)
+                    tile_rect.centery = pos[1] \
+                        - (((row_count - 1) * tile_rect.height) / 2) \
+                        + (i * tile_rect.height)
+
+                    # add tile to sprite group
+                    self.tile_group.add(Tile(tile_img, tile_rect))
 
                 j += 1
 

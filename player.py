@@ -59,14 +59,17 @@ class Player():
         self.animations[name] = frames
 
 
-    def update(self):
+    '''
+    tiles:      the sprite group of tiles that the player can collide with
+    '''
+    def update(self, tiles):
 
         # move
         keys = pygame.key.get_pressed()
         self.change_x_speed(keys)
         self.change_y_speed(keys)
         self.rect.move_ip(self.speed)
-        self.bounce(pygame.display.Info(), 0.3)
+        self.bounce(tiles, 0.3)
 
         # update animation
         if (abs(self.speed[0]) > self.MAX_SPEED[0] * 0.9) and not self.jumping:
@@ -118,26 +121,24 @@ class Player():
 
 
     '''
-    screen_info:    object from which to get bounds of window
-    bouciness:      how much the character should bounce,
-                    0 is none and 1 bounces full velocity
+    tiles:      sprite group of tiles this player can collide with
+    bouciness:  how much the character should bounce,
+                0 is none and 1 bounces full velocity
     '''
-    def bounce(self, screen_info, bounciness=0):
+    def bounce(self, tiles, bounciness=0):
 
-        # stop on L/R sides of screen
-        if self.rect.left < 0:
-            self.rect.left = 0
-            self.speed[0] *= -bounciness
+        # collide with tiles
+        for tile in pygame.sprite.spritecollide(self, tiles, False):
 
-        elif self.rect.right > screen_info.current_w:
-            self.rect.right = screen_info.current_w
-            self.speed[0] *= -bounciness
+            # bounce off top
+            if self.speed[1] >= self.rect.bottom - tile.rect.top:
+                self.rect.bottom = tile.rect.top
+                self.jumping = False
+                self.speed[1] *= -bounciness
 
-        # bounce on bottom of screen
-        if self.rect.bottom > screen_info.current_h:
-            self.rect.bottom = screen_info.current_h
-            self.speed[1] *= -bounciness
-            self.jumping = False
+            # TODO bounce off sides
+            else:
+                pass
 
 
     '''

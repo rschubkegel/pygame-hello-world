@@ -27,7 +27,7 @@ player = Player( \
 tile_map = TileMap( \
     RegularSpritesheet("imgs/tiles_packed.png", 18, scale), \
     file_path="levels/level0.csv", \
-    pos=(0, screen_height))
+    pos=(screen_width // 2, (screen_height // 2) + 100))
 
 
 # initialize the game
@@ -51,10 +51,13 @@ def main():
         for event in pygame.event.get():
             if event.type == QUIT:
                 quit_game()
+            elif event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    quit_game()
 
         # physics
         clock.tick(60)
-        player.update()
+        player.update(tile_map.tile_group)
         tile_map.update((0, 0))
 
         # display
