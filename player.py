@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from regular_spritesheet import *
+from spritesheet.regular_spritesheet import *
 
 
 class Player():

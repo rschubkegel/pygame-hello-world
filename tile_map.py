@@ -1,12 +1,8 @@
 import pygame, pandas
-from regular_spritesheet import *
+from spritesheet.regular_spritesheet import *
 
 
 class TileMap:
-
-
-    # 2D list of tiles
-    tile_group = None
 
 
     '''

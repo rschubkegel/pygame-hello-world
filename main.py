@@ -1,11 +1,7 @@
-# Coded by Rylan Schubkegel: https://github.com/rschubkegel
-# Sprites by Kenny: https://kenney.nl/assets/pixel-platformer
-
-
 # import packages
 import pygame, sys
 from pygame.locals import *
-from regular_spritesheet import *
+from spritesheet.regular_spritesheet import *
 from player import *
 from tile_map import *
 

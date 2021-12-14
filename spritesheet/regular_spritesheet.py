@@ -1,7 +1,7 @@
-import spritesheet
+from spritesheet.spritesheet import Spritesheet
 
 
-class RegularSpritesheet(spritesheet.Spritesheet):
+class RegularSpritesheet(Spritesheet):
 
 
     '''
