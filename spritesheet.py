@@ -21,5 +21,5 @@ class Spritesheet:
     def get_image(self, x, y, width, height, scale=1):
         image = pygame.Surface([width, height])
         image.blit(self.spritesheet, (0, 0), (x, y, width, height))
-        image.set_colorkey((0,0,0)) # TODO format to use per-pixel alpha
+        image.set_colorkey((0,0,0,0))
         return pygame.transform.scale(image, (width * scale, height * scale))
