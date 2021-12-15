@@ -1,9 +1,12 @@
+from typing import Sequence
 import pygame
 from pygame.locals import *
-from spritesheet.regular_spritesheet import *
+from utils.animation import Animation
+from utils.spritesheet.regular_spritesheet import RegularSpritesheet
 
 
 class Player():
+    '''A class representing a player that can jump, fall, and move L/R.'''
 
 
     # how fast player moves L/R, how fast player can fall
@@ -22,11 +25,15 @@ class Player():
     JUMP_SPEED = 15
 
 
-    '''
-    pos:        a tuple with x & y coordinates where the player starts
-    sheet:      a regular sprite sheet from which to load animations
-    '''
-    def __init__(self, pos, sheet):
+    def __init__(self, pos: tuple[int, int], sheet: RegularSpritesheet) -> None:
+        '''
+        Creates and initializes the player.
+
+        Parameters
+        - pos:   a tuple with x & y coordinates where the player starts
+        - sheet: a regular sprite sheet from which to load animations
+        '''
+
         super().__init__()
         self.speed = pygame.math.Vector2(0, 0)
         self.load_all_animations(sheet)
@@ -37,39 +44,34 @@ class Player():
         self.jumping = False
 
 
-    '''
-    sheet:      a regular sprite sheet from which to load animations
-    '''
-    def load_all_animations(self, sheet):
+    def load_all_animations(self, sheet: RegularSpritesheet) -> None:
+        '''
+        Loads all player-specific animations
+        into a dictionary of Animation objects.
+
+        Parameters
+        - sheet: a regular sprite sheet from which to load animations
+        '''
+
         self.animations = {}
-        self.load_animation(sheet, "idle", 1, 0)
-        self.load_animation(sheet, "run", 2, 0)
+        self.animations["idle"] = Animation(sheet.get_sprites(1, 0, 0))
+        self.animations["run"] = Animation(sheet.get_sprites(2, 0, 0))
 
 
-    '''
-    sheet:      a regular sprite sheet from which to load animation frames
-    name:       the name of this animation
-    frame_num:  the number of frames in this animation
-    row:        the row on the sprite sheet where this animation is loaded from
-    '''
-    def load_animation(self, sheet, name, frame_num, row):
-        frames = []
-        for i in range(frame_num):
-            frames.append(sheet.get_image(0 + i, row))
-        self.animations[name] = frames
+    def update(self, tiles: pygame.sprite.Group) -> None:
+        '''
+        Player updates (including animation).
 
-
-    '''
-    tiles:      the sprite group of tiles that the player can collide with
-    '''
-    def update(self, tiles):
+        Parameters
+        tiles: the sprite group of tiles that the player can collide with
+        '''
 
         # move
         keys = pygame.key.get_pressed()
-        self.change_x_speed(keys)
-        self.change_y_speed(keys)
+        self._change_x_speed(keys)
+        self._change_y_speed(keys)
         self.rect.move_ip(self.speed)
-        self.bounce(tiles, 0.3)
+        self._bounce(tiles, 0.3)
 
         # update animation
         if (abs(self.speed[0]) > self.MAX_SPEED[0] * 0.9) and not self.jumping:
@@ -78,10 +80,13 @@ class Player():
             self.cur_anim = "idle"
 
 
-    '''
-    keys:       the keys being pressed (to check for L/R movement)
-    '''
-    def change_x_speed(self, keys):
+    def _change_x_speed(self, keys: Sequence[bool]) -> None:
+        '''
+        Updates the player's speed based on key presses.
+
+        Parameters
+        keys: the keys being pressed (to check for L/R movement)
+        '''
 
         # adjust speed L/R keys are pressed
         if keys[K_RIGHT]:
@@ -104,10 +109,13 @@ class Player():
             self.speed[0] = -self.MAX_SPEED[0]
 
 
-    '''
-    keys:       the keys being pressed (to check for jumping)
-    '''
-    def change_y_speed(self, keys):
+    def _change_y_speed(self, keys: Sequence[bool]) -> None:
+        '''
+        Updates player's speed based on gravity and jumping.
+
+        Parameters
+        keys: the keys being pressed (to check for jumping)
+        '''
 
         # gravity
         self.speed[1] += self.GRAVITY
@@ -120,31 +128,35 @@ class Player():
             self.jumping = True
 
 
-    '''
-    tiles:      sprite group of tiles this player can collide with
-    bouciness:  how much the character should bounce,
-                0 is none and 1 bounces full velocity
-    '''
-    def bounce(self, tiles, bounciness=0):
+    def _bounce(self, tiles: pygame.sprite.Group, bounciness: int = 0) -> None:
+        '''
+        Handles collision with tiles and bouncing (if desired).
+
+        Parameters
+        tiles:     sprite group of tiles this player can collide with
+        bouciness: how much the character should bounce,
+                   0 is none and 1 bounces full velocity
+        '''
 
         # collide with tiles
         for tile in pygame.sprite.spritecollide(self, tiles, False):
 
-            # bounce off top
+            # bounce off top of tiles
             if self.speed[1] >= self.rect.bottom - tile.rect.top:
                 self.rect.bottom = tile.rect.top
                 self.jumping = False
                 self.speed[1] *= -bounciness
 
             # TODO bounce off sides
-            else:
-                pass
 
 
-    '''
-    screen:     the screen that will blit the player
-    '''
-    def display(self, screen):
+    def display(self, screen: pygame.surface.Surface) -> None:
+        '''
+        Blits the player to the specified surface.
+
+        Parameters
+        screen: the screen that will blit the player
+        '''
 
         # get frame from current animation
         anim_len = len(self.animations[self.cur_anim])

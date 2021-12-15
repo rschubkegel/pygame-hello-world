@@ -1,43 +1,48 @@
-# import packages
 import pygame, sys
 from pygame.locals import *
-from spritesheet.regular_spritesheet import *
+from utils.spritesheet.regular_spritesheet import *
+from utils.tile_map import *
 from player import *
-from tile_map import *
 
 
-# initialize game engine
-pygame.init()
+def init_game() -> None:
+    '''
+    Initializes the game and creates a variety of global variables.
+    Yes I know that's gross 🤮
+    '''
 
-# create pygame variables
-screen_width = pygame.display.Info().current_w - 50
-screen_height = pygame.display.Info().current_h - 100
-screen = pygame.display.set_mode((screen_width, screen_height))
-scale = 3
-clock = pygame.time.Clock()
+    # make identifiers global
+    global screen_width, screen_height, screen, scale, clock, player, tile_map
 
-# create game variables
-player = Player( \
-    (screen_width // 2, screen_height // 2), \
-    RegularSpritesheet("imgs/characters_packed.png", 24, scale))
-tile_map = TileMap( \
-    RegularSpritesheet("imgs/tiles_packed.png", 18, scale), \
-    file_path="levels/level0.csv", \
-    pos=(screen_width // 2, (screen_height // 2) + 100))
+    pygame.init()
+
+    # create pygame variables
+    screen_width = pygame.display.Info().current_w - 50
+    screen_height = pygame.display.Info().current_h - 100
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    scale = 3
+    clock = pygame.time.Clock()
+
+    # create game variables
+    player = Player( \
+        (screen_width // 2, screen_height // 2), \
+        RegularSpritesheet("imgs/characters_packed.png", 24, scale))
+    tile_map = TileMap( \
+        RegularSpritesheet("imgs/tiles_packed.png", 18, scale), \
+        file_path="levels/level0.csv", \
+        pos=(screen_width // 2, (screen_height // 2) + 100))
 
 
-# initialize the game
-def init_game():
-    pass
+def quit_game() -> None:
+    '''
+    Exits the game. This would be a good place to save progress etc.
+    '''
 
-
-# closes the game
-def quit_game():
     sys.exit()
 
 
-# main game function
-def main():
+def main() -> None:
+    '''Main game loop.'''
 
     init_game()
 
