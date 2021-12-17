@@ -19,10 +19,56 @@ class TileMap:
         self.tile_group = pygame.sprite.Group()
 
         # load data from file
-        self._load_from_file(sheet, file_path, pos)
+        if file_path[-4:] == '.csv':
+            self._load_from_csv(sheet, file_path, pos)
+        elif file_path[-4:] == '.png':
+            self._load_from_img(sheet, file_path, pos)
+        else:
+            raise Exception(f'{file_path[-4:]} is not a valid map type')
 
 
-    def _load_from_file(self, sheet: RegularSpritesheet, file_path: str, pos: tuple[int, int]) -> None:
+    def _load_from_img(self, sheet: RegularSpritesheet, file_path: str, pos: tuple[int, int], legend: dict = {
+        # pixel color: (col,row) in spritesheet
+        (  0,255,  0): (  2,  1),
+        (255,255,  0): (  2,  6)
+    }):
+        '''
+        Loads a grid of tiles from a PNG file. The color of each pixel is mapped
+        to a col,row in the provided sprite sheet in the legend parameter.
+
+        Parameters
+        - sheet:     a regular sprite sheet from which to load tiles
+        - file_path: a file from which to load level data
+        - pos:       a tuple with x,y values of the center of the map
+        - legend:    a dictionary whose keys are the RGB colors of pixels in
+                     the map image, and whose values are the col,row coordinates
+                     of a tile in the provided sprite sheet
+        '''
+
+        # load image
+        surface = pygame.image.load(file_path)
+
+        # calculate tile map offset
+        offset = pygame.math.Vector2(
+            (surface.get_width() * sheet.res * sheet.scale) / 2,
+            (surface.get_height() * sheet.res * sheet.scale) / 2)
+        offset = pos - offset
+
+        # loop through all pixels of surface
+        for row in range(surface.get_height()):
+            for col in range(surface.get_width()):
+
+                # add tiles whose pixel color values are in legend
+                pix_color = tuple(surface.get_at((col, row))[:-1])
+                if pix_color in legend.keys():
+                    tile_img          = sheet.get_sprite(legend[pix_color][0], legend[pix_color][1])
+                    tile_rect         = tile_img.get_rect()
+                    tile_rect.topleft = (col * tile_rect.width, row * tile_rect.height)
+                    tile_rect.left    += offset.x
+                    self.tile_group.add(Tile(tile_img, tile_rect))
+
+
+    def _load_from_csv(self, sheet: RegularSpritesheet, file_path: str, pos: tuple[int, int]) -> None:
         '''
         Loads a grid of tiles from a CSV file. The tile images are loaded
         from a sprite sheet according to a two-letter code corresponding

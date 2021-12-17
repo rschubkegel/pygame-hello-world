@@ -29,7 +29,7 @@ def init_game() -> None:
         RegularSpritesheet("imgs/characters_packed.png", 24, scale))
     tile_map = TileMap( \
         RegularSpritesheet("imgs/tiles_packed.png", 18, scale), \
-        file_path="levels/level0.csv", \
+        file_path="levels/level0.png", \
         pos=(screen_width // 2, (screen_height // 2) + 100))
 
 
