@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame
 from pygame.locals import *
 from utils.spritesheet.regular_spritesheet import *
 from utils.tile_map import *
@@ -38,7 +38,7 @@ def quit_game() -> None:
     Exits the game. This would be a good place to save progress etc.
     '''
 
-    sys.exit()
+    pygame.quit()
 
 
 def main() -> None:
